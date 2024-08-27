@@ -12,17 +12,6 @@ export class ActivityLogger {
 		this.plugin = plugin;
 	}
 
-	private getLinks(moment: Moment, includeRegex: string[] = [], excludeRegex: string[] = [], includePaths: string[] = [], excludePaths: string[] = [], statType: 'mtime' | 'ctime'): string[] {
-		console.log(`Getting links for moment: ${moment.format()}, statType: ${statType}`);
-		return this.app.vault.getFiles()
-			.filter(f => moment.isSame(new Date(f.stat[statType]), 'day') && this.fileMatchesFilters(f.path, includeRegex, excludeRegex, includePaths, excludePaths))
-			.map(f => `[[${getLinkpath(f.path)}]]`);
-	}
-
-	private getLinksToFilesModifiedOnDate(moment: Moment, includeRegex: string[] = [], excludeRegex: string[] = [], includePaths: string[] = [], excludePaths: string[] = []): string[] {
-		return this.getLinks(moment, includeRegex, excludeRegex, includePaths, excludePaths, 'mtime');
-	}
-
 	private isArrayNotEmptyAndNoEmptyStrings(arr: string[]): boolean {
 		return arr.length > 0 && arr.every(item => item !== "");
 	}
@@ -58,9 +47,13 @@ export class ActivityLogger {
 		excludePaths?: string[]
 	}) {
 		let content = await this.app.vault.read(activeView.file!! /* TODO */);
-		let modifiedTodayLinks: string[] = this.getLinksToFilesModifiedOnDate(
-			moment(), includeRegex, excludeRegex, includePaths, excludePaths);
-		content = this.appendLinksToContent(content, modifiedTodayLinks, 'Modified');
+
+		const links: string[] = this.app.vault.getFiles()
+			.filter(f => moment().isSame(new Date(f.stat.mtime), 'day')) 
+			.filter(f => this.fileMatchesFilters(f.path, includeRegex, excludeRegex, includePaths, excludePaths))
+			.map(f => `[[${getLinkpath(f.path)}]]`);
+
+		content = this.appendLinksToContent(content, links, 'Modified');
 
 		await this.app.vault.modify(activeView.file!! /* TODO */, content);
 	}

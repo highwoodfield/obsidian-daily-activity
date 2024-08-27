@@ -10,3 +10,16 @@ For example, 1:00 AM on 27 Aug 2024 is treated as 26 Aug 2024. Currently, this t
 Here is the sample.
 
 ![sample](./sample.gif)
+
+## Installation
+
+First, run the script below.
+
+```
+git clone https://github.com/highwoodfield/obsidian-modified-notes-of-today.git
+cd obsidian-modified-notes-of-today
+npm install
+npm run release-build
+```
+
+Then, copy `main.js` and `manifest.json` to the desired directory (like `.obsidian/plugins/obsidian-modified-notes-of-today/`).

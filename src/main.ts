@@ -1,10 +1,7 @@
 /** @format */
 
-import {Moment} from 'moment'
 import {MarkdownView, Plugin} from 'obsidian'
 import {ActivityLogger} from 'src/ActivityLogger'
-import DateParser from 'src/DateParser'
-import FilterModal from 'src/modal/FilterModal'
 
 interface DailyActivityPluginSettings {
     // TODO:
@@ -47,27 +44,10 @@ export default class DailyActivityPlugin extends Plugin {
 				if (checking) {
 					return true
 				}
-				
-				let moments = this.getMoments(new Date().toString(), new Date().toString(), activeView);
-				this.activityLogger.insertActivityLog({
-						insertCreatedOnDateFiles: false,
-						insertModifiedOnDateFiles: true,
-						moments: moments,
-						activeView,
-						makeLink: true
-					});
+
+				this.activityLogger.insertTodaysModifiedFileLinks({activeView});
 			}
 		});
-    }
-
-	// FIXME:
-    private getMoments(fromDate: string, toDate: string, activeView: MarkdownView) {
-        if (fromDate && toDate) {
-            const dp = new DateParser();
-            return dp.parseDateRangeFromSelection(`${fromDate} to ${toDate}`);
-        } else {
-            return this.getDates(activeView);
-        }
     }
 
     onunload() {
@@ -80,27 +60,5 @@ export default class DailyActivityPlugin extends Plugin {
 
     async saveSettings() {
         await this.saveData(this.settings)
-    }
-
-    getDates(activeView: MarkdownView): Moment[] {
-        let editor = activeView.editor
-        const dp = new DateParser()
-
-        if (!editor || !editor.somethingSelected()) {
-            // Return today for start & end
-            return [window.moment()]
-        }
-
-        let selection = editor.getSelection()
-        console.log('Selection contains a date range: ', selection.contains('to'))
-
-        let moments: Moment[] = []
-        if (selection.contains('to')) {
-            moments = dp.parseDateRangeFromSelection(selection)
-        } else {
-            moments.push(window.moment(dp.parseDate(selection)))
-        }
-
-        return moments
     }
 }

@@ -1,6 +1,7 @@
 import DailyActivityPlugin from 'src/main';
-import {App, getLinkpath, MarkdownView, Plugin} from 'obsidian';
-import {Moment} from 'moment';
+import { App, getLinkpath, MarkdownView, Plugin } from 'obsidian';
+import { Moment } from 'moment';
+import moment from 'moment';
 
 export class ActivityLogger {
     app: App;
@@ -11,19 +12,15 @@ export class ActivityLogger {
         this.plugin = plugin;
     }
 
-    private getLinks(moment: Moment, makeLink: boolean, includeRegex: string[] = [], excludeRegex: string[] = [], includePaths: string[] = [], excludePaths: string[] = [], statType: 'mtime' | 'ctime'): string[] {
-        console.log(`Getting links for moment: ${moment.format()}, makeLink: ${makeLink}, statType: ${statType}`);
+    private getLinks(moment: Moment, includeRegex: string[] = [], excludeRegex: string[] = [], includePaths: string[] = [], excludePaths: string[] = [], statType: 'mtime' | 'ctime'): string[] {
+        console.log(`Getting links for moment: ${moment.format()}, statType: ${statType}`);
         return this.app.vault.getFiles()
             .filter(f => moment.isSame(new Date(f.stat[statType]), 'day') && this.fileMatchesFilters(f.path, includeRegex, excludeRegex, includePaths, excludePaths))
-            .map(f => makeLink ? `[[${getLinkpath(f.path)}]]` : getLinkpath(f.path));
+            .map(f => `[[${getLinkpath(f.path)}]]`);
     }
 
-    private getLinksToFilesModifiedOnDate(moment: Moment, makeLink = true, includeRegex: string[] = [], excludeRegex: string[] = [], includePaths: string[] = [], excludePaths: string[] = []): string[] {
-        return this.getLinks(moment, makeLink, includeRegex, excludeRegex, includePaths, excludePaths, 'mtime');
-    }
-
-    private getLinksToFilesCreatedOnDate(moment: Moment, makeLink = true, includeRegex: string[] = [], excludeRegex: string[] = [], includePaths: string[] = [], excludePaths: string[] = []): string[] {
-        return this.getLinks(moment, makeLink, includeRegex, excludeRegex, includePaths, excludePaths, 'ctime');
+    private getLinksToFilesModifiedOnDate(moment: Moment, includeRegex: string[] = [], excludeRegex: string[] = [], includePaths: string[] = [], excludePaths: string[] = []): string[] {
+        return this.getLinks(moment, includeRegex, excludeRegex, includePaths, excludePaths, 'mtime');
     }
 
     private isArrayNotEmptyAndNoEmptyStrings(arr: string[]): boolean {
@@ -43,41 +40,24 @@ export class ActivityLogger {
         return `${existingContent}\n\n${links.join('\n')}\n`;
     }
 
-    async insertActivityLog({
-                                insertCreatedOnDateFiles = false,
-                                insertModifiedOnDateFiles = false,
-                                moments = [window.moment()],
-                                activeView = null,
-                                makeLink = true,
+    async insertTodaysModifiedFileLinks({
+                                activeView,
                                 includeRegex = [],
                                 excludeRegex = [],
                                 includePaths = [],
                                 excludePaths = []
                             }: {
-        insertCreatedOnDateFiles?: boolean,
-        insertModifiedOnDateFiles?: boolean,
-        moments?: Moment[],
-        activeView?: MarkdownView,
-        makeLink?: boolean,
+        activeView: MarkdownView,
         includeRegex?: string[],
         excludeRegex?: string[],
         includePaths?: string[],
         excludePaths?: string[]
     }) {
-        if (!activeView) return;
-        let editor = activeView.editor;
+        let content = await this.app.vault.read(activeView.file!! /* TODO */);
+		let modifiedTodayLinks: string[] = this.getLinksToFilesModifiedOnDate(
+			moment(), includeRegex, excludeRegex, includePaths, excludePaths);
+		content = this.appendLinksToContent(content, modifiedTodayLinks, 'Modified');
 
-        let content = await this.app.vault.read(activeView.file);
-        let createdTodayLinks: string[] = [];
-        if (insertCreatedOnDateFiles) {
-            createdTodayLinks = moments.flatMap(moment => this.getLinksToFilesCreatedOnDate(moment, makeLink, includeRegex, excludeRegex, includePaths, excludePaths));
-            content = this.appendLinksToContent(content, createdTodayLinks, 'Created');
-        }
-        if (insertModifiedOnDateFiles) {
-            let modifiedTodayLinks: string[] = moments.flatMap(moment => this.getLinksToFilesModifiedOnDate(moment, makeLink, includeRegex, excludeRegex, includePaths, excludePaths).filter(link => !createdTodayLinks.includes(link)));
-            content = this.appendLinksToContent(content, modifiedTodayLinks, 'Modified');
-        }
-
-        await this.app.vault.modify(activeView.file, content);
+        await this.app.vault.modify(activeView.file!! /* TODO */, content);
     }
 }

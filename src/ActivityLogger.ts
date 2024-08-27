@@ -12,16 +12,16 @@ export class ActivityLogger {
 		this.plugin = plugin;
 	}
 
-	private isArrayNotEmptyAndNoEmptyStrings(arr: string[]): boolean {
+	private hasArrNonEmptyStr(arr: string[]): boolean {
 		return arr.length > 0 && arr.every(item => item !== "");
 	}
 
 	private fileMatchesFilters(filePath: string, includeRegex: string[] = [], excludeRegex: string[] = [], includePaths: string[] = [], excludePaths: string[] = []): boolean {
-		if (this.isArrayNotEmptyAndNoEmptyStrings(excludeRegex) && excludeRegex.some(regex => new RegExp(regex).test(filePath))) {
+		if (this.hasArrNonEmptyStr(excludeRegex) && excludeRegex.some(regex => new RegExp(regex).test(filePath))) {
 			return false;
 		}
 
-		if (this.isArrayNotEmptyAndNoEmptyStrings(excludePaths) && excludePaths.some(part => filePath.includes(part))) {
+		if (this.hasArrNonEmptyStr(excludePaths) && excludePaths.some(part => filePath.includes(part))) {
 			return false;
 		}
 

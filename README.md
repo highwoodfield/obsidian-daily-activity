@@ -13,7 +13,7 @@ Here is the sample.
 
 ## Installation
 
-First, run the script below.
+First, run the script below, or extract `obsidian-modified-notes-of-today.zip` from [Releases](https://github.com/highwoodfield/obsidian-modified-notes-of-today/releases).
 
 ```
 git clone https://github.com/highwoodfield/obsidian-modified-notes-of-today.git

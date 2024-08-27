@@ -1,6 +1,6 @@
 # Obsidian Modified Notes of Today
 
-This plugin is a fork of [obsidian-daily-activity](https://github.com/trydalch/obsidian-daily-activity) plugin with limited functionality.
+This plugin is a fork of [obsidian-daily-activity](https://github.com/trydalch/obsidian-daily-activity) plugin with reduced functionality.
 
 The only goal of this plugin is to add a function to Obsidian that inserts links of the notes which are created or modified on the date.
 

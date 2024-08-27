@@ -52,6 +52,7 @@ export class ActivityLogger {
 		const links: string[] = this.app.vault.getFiles()
 			.filter(f => moment().isSame(new Date(f.stat.mtime), 'day')) 
 			.filter(f => this.fileMatchesFilters(f.path, includeRegex, excludeRegex, includePaths, excludePaths))
+			.sort((a, b) => a.stat.mtime - b.stat.mtime)
 			.map(this.generateLine);
 
 		const newContent = `${initialContent}\n\n**Modified Pages**\n${links.join('\n')}\n`;

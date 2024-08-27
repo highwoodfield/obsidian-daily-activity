@@ -55,7 +55,7 @@ export class ActivityLogger {
 			.sort((a, b) => a.stat.mtime - b.stat.mtime)
 			.map(this.generateLine);
 
-		const newContent = `${initialContent}\n\n**Modified Pages of ${getHumanDate(new Date()).toLocaleDateString()}**\n${links.join('\n')}\n`;
+		const newContent = `${initialContent}\n\n**Modified Notes of ${getHumanDate(new Date()).toLocaleDateString()}**\n${links.join('\n')}\n`;
 
 		await this.app.vault.modify(file, newContent);
 	}

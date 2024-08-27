@@ -36,7 +36,7 @@ export default class DailyActivityPlugin extends Plugin {
 			name: "Insert links to files modified today",
 
 			checkCallback: (checking: boolean) => {
-				let activeView = this.app.workspace.getActiveViewOfType(MarkdownView)
+				const activeView = this.app.workspace.getActiveViewOfType(MarkdownView)
 				if (activeView == null) {
 					return false
 				}

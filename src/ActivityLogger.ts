@@ -1,6 +1,5 @@
 import DailyActivityPlugin from 'src/main';
 import { App, getLinkpath, MarkdownView, Plugin } from 'obsidian';
-import { Moment } from 'moment';
 import moment from 'moment';
 
 export class ActivityLogger {
@@ -29,10 +28,6 @@ export class ActivityLogger {
 			(includePaths.length === 0 || includePaths.some(part => filePath.includes(part)));
 	}
 
-	appendLinksToContent(existingContent: string, links: string[], header: string): string {
-		return `${existingContent}\n\n${links.join('\n')}\n`;
-	}
-
 	async insertTodaysModifiedFileLinks({
 		activeView,
 		includeRegex = [],
@@ -46,15 +41,17 @@ export class ActivityLogger {
 		includePaths?: string[],
 		excludePaths?: string[]
 	}) {
-		let content = await this.app.vault.read(activeView.file!! /* TODO */);
+		const file = activeView.file;
+		if (file === null) return;
+		const initialContent = await this.app.vault.read(file);
 
 		const links: string[] = this.app.vault.getFiles()
 			.filter(f => moment().isSame(new Date(f.stat.mtime), 'day')) 
 			.filter(f => this.fileMatchesFilters(f.path, includeRegex, excludeRegex, includePaths, excludePaths))
 			.map(f => `[[${getLinkpath(f.path)}]]`);
 
-		content = this.appendLinksToContent(content, links, 'Modified');
+		const newContent = `${initialContent}\n\n**Modified Pages**\n${links.join('\n')}\n`;
 
-		await this.app.vault.modify(activeView.file!! /* TODO */, content);
+		await this.app.vault.modify(file, newContent);
 	}
 }

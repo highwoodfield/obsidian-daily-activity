@@ -34,144 +34,33 @@ export default class DailyActivityPlugin extends Plugin {
 
         this.activityLogger = new ActivityLogger(this.app, this)
 
-        this.addCommand({
-            id: 'links-to-files-created-today',
-            name: "Links to Files Created Today for date (default's for today)",
-            checkCallback: (checking: boolean) => {
-                let activeView = this.app.workspace.getActiveViewOfType(MarkdownView)
-                if (activeView == null) {
-                    return false
-                }
+		this.addCommand({
+			id: "daily-activity-links-to-files-modified",
+			name: "Insert links to files modified today",
 
-                if (checking) {
-                    return true
-                }
+			checkCallback: (checking: boolean) => {
+				let activeView = this.app.workspace.getActiveViewOfType(MarkdownView)
+				if (activeView == null) {
+					return false
+				}
 
-                new FilterModal(this.app, (fromDate, toDate, includeRegex: any, excludeRegex: any, includePaths: any, excludePaths: any) => {
-                    let moments = this.getMoments(fromDate, toDate, activeView);
-                    this.activityLogger.insertActivityLog(
-                        {
-                            insertCreatedOnDateFiles: true,
-                            insertModifiedOnDateFiles: false,
-                            moments: moments,
-                            activeView,
-                            makeLink: true,
-                            includeRegex,
-                            excludeRegex,
-                            includePaths,
-                            excludePaths
-                        });
-                }).open();
-            },
-            hotkeys: [
-                {
-                    modifiers: ['Alt'],
-                    key: 'c',
-                },
-            ],
-        })
-
-        this.addCommand({
-            id: 'links-to-files-modified-today',
-            name: "Links to Files Modified for date (default's for today)",
-            checkCallback: (checking: boolean) => {
-                let activeView = this.app.workspace.getActiveViewOfType(MarkdownView)
-                if (activeView == null) {
-                    return false
-                }
-
-                if (checking) {
-                    return true
-                }
-
-                new FilterModal(this.app, (fromDate, toDate, includeRegex: any, excludeRegex: any, includePaths: any, excludePaths: any) => {
-                    let moments = this.getMoments(fromDate, toDate, activeView);
-                    this.activityLogger.insertActivityLog(
-                        {
-                            insertCreatedOnDateFiles: false,
-                            insertModifiedOnDateFiles: true,
-                            moments: moments,
-                            activeView,
-                            makeLink: true,
-                            includeRegex,
-                            excludeRegex,
-                            includePaths,
-                            excludePaths
-                        });
-                }).open();
-            },
-            hotkeys: [
-                {
-                    modifiers: ['Alt'],
-                    key: 'm',
-                },
-            ],
-        })
-
-        this.addCommand({
-            id: 'files-created-today',
-            name: "Plain Text List of Files Created for date (default's for today)",
-            checkCallback: (checking: boolean) => {
-                let activeView = this.app.workspace.getActiveViewOfType(MarkdownView)
-                if (activeView == null) {
-                    return false
-                }
-
-                if (checking) {
-                    return true
-                }
-
-                new FilterModal(this.app, (fromDate, toDate, includeRegex: any, excludeRegex: any, includePaths: any, excludePaths: any) => {
-                    let moments = this.getMoments(fromDate, toDate, activeView);
-                    this.activityLogger.insertActivityLog(
-                        {
-                            insertCreatedOnDateFiles: true,
-                            insertModifiedOnDateFiles: false,
-                            moments: moments,
-                            activeView,
-                            makeLink: false,
-                            includeRegex,
-                            excludeRegex,
-                            includePaths,
-                            excludePaths
-                        });
-                }).open();
-            },
-            hotkeys: [],
-        })
-
-        this.addCommand({
-            id: 'files-modified-today',
-            name: "Plain Text List of Files Modified for date (default's for today)",
-            checkCallback: (checking: boolean) => {
-                let activeView = this.app.workspace.getActiveViewOfType(MarkdownView)
-                if (activeView == null) {
-                    return false
-                }
-
-                if (checking) {
-                    return true
-                }
-
-                new FilterModal(this.app, (fromDate, toDate, includeRegex: any, excludeRegex: any, includePaths: any, excludePaths: any) => {
-                    let moments = this.getMoments(fromDate, toDate, activeView);
-                    this.activityLogger.insertActivityLog(
-                        {
-                            insertCreatedOnDateFiles: false,
-                            insertModifiedOnDateFiles: true,
-                            moments: moments,
-                            makeLink: false,
-                            includeRegex,
-                            excludeRegex,
-                            includePaths,
-                            excludePaths
-                        });
-                }).open();
-            },
-            hotkeys: [],
-        })
+				if (checking) {
+					return true
+				}
+				
+				let moments = this.getMoments(new Date().toString(), new Date().toString(), activeView);
+				this.activityLogger.insertActivityLog({
+						insertCreatedOnDateFiles: false,
+						insertModifiedOnDateFiles: true,
+						moments: moments,
+						activeView,
+						makeLink: true
+					});
+			}
+		});
     }
 
+	// FIXME:
     private getMoments(fromDate: string, toDate: string, activeView: MarkdownView) {
         if (fromDate && toDate) {
             const dp = new DateParser();

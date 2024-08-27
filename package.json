@@ -1,5 +1,5 @@
 {
-  "name": "obsidian-daily-activity",
+  "name": "obsidian-modified-notes-of-today",
   "version": "0.3.2",
   "description": "This is a plugin for Obsidian (https://obsidian.md).",
   "main": "main.js",

@@ -1,10 +1,10 @@
 {
-  "id": "daily-activity",
-  "name": "Daily Activity",
+  "id": "modified-notes-of-today",
+  "name": "Modified Notes of Today",
   "version": "0.5.0",
   "minAppVersion": "0.13.23",
-  "description": "A collection of commands to track your writing activity.",
-  "author": "Trevor Rydalch",
-  "authorUrl": "https://github.com/trydalch",
+  "description": "Insert links of the notes which are modified on the date",
+  "author": "Trevor Rydalch, highwoodfield",
+  "authorUrl": "https://github.com/trydalch https://github.com/highwoodfield",
   "isDesktopOnly": false
 }

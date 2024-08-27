@@ -80,39 +80,4 @@ export class ActivityLogger {
 
         await this.app.vault.modify(activeView.file, content);
     }
-
-    generateFileStatRow(moment: Moment, stats: string[]): string {
-        let row = `|${moment.format('YYYY-MM-DD')}|`;
-        stats.forEach(stat => {
-            let statValue = 0;
-            if (stat === 'created') {
-                statValue = this.getLinksToFilesCreatedOnDate(moment, false).length;
-            } else if (stat === 'modified') {
-                statValue = this.getLinksToFilesModifiedOnDate(moment, false).length;
-            }
-            row += `${statValue}|`;
-        });
-        return row;
-    }
-
-
-    generateFileStatHeader(stats: string[]): string {
-        return `| Date |${stats.map(s => ` ${s.charAt(0).toUpperCase() + s.slice(1)} `).join('|')}|\n|-------|${stats.map(() => '----------').join('|')}|`;
-    }
-
-    async insertFileStats({
-                              stats = ['created', 'modified'],
-                              moments = [window.moment()],
-                              activeView = null,
-                              allTime = false
-                          }: { stats?: string[], moments?: Moment[], activeView?: MarkdownView, allTime?: boolean }) {
-        if (!activeView) return;
-
-        let content = await this.app.vault.read(activeView.file);
-        let header = this.generateFileStatHeader(stats);
-        let rows: string[] = moments.map(moment => this.generateFileStatRow(moment, stats));
-        let table = `${header}\n${rows.join('\n')}`;
-
-        await this.app.vault.modify(activeView.file, `${content}\n${table}`);
-    }
 }

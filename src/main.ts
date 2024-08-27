@@ -170,43 +170,6 @@ export default class DailyActivityPlugin extends Plugin {
             },
             hotkeys: [],
         })
-
-        this.addCommand({
-            id: 'file-stats-today',
-            name: "(Deprecated) Today's Stats",
-            checkCallback: (checking: boolean) => {
-                let activeView = this.app.workspace.getActiveViewOfType(MarkdownView)
-                if (activeView == null) {
-                    return false
-                }
-
-                if (checking) {
-                    return true
-                }
-
-                this.activityLogger.insertFileStats({activeView})
-            },
-        })
-
-        this.addCommand({
-            id: 'obsidian-stats',
-            name: "Stats for date (default's for today)",
-            checkCallback: (checking: boolean) => {
-                let activeView = this.app.workspace.getActiveViewOfType(MarkdownView)
-                if (activeView == null) {
-                    return false
-                }
-
-                if (checking) {
-                    return true
-                }
-
-                let moments = this.getDates(activeView)
-                console.log(`${moments}`)
-
-                this.activityLogger.insertFileStats({activeView, moments})
-            },
-        })
     }
 
     private getMoments(fromDate: string, toDate: string, activeView: MarkdownView) {

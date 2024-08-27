@@ -1,6 +1,6 @@
 import DailyActivityPlugin from 'src/main';
+import { isHumanToday } from './datetime';
 import { App, getLinkpath, MarkdownView, Plugin, TFile } from 'obsidian';
-import moment from 'moment';
 
 export class ActivityLogger {
 	app: App;
@@ -50,7 +50,7 @@ export class ActivityLogger {
 		const initialContent = await this.app.vault.read(file);
 
 		const links: string[] = this.app.vault.getFiles()
-			.filter(f => moment().isSame(new Date(f.stat.mtime), 'day')) 
+			.filter(f => isHumanToday(new Date(f.stat.mtime))) 
 			.filter(f => this.fileMatchesFilters(f.path, includeRegex, excludeRegex, includePaths, excludePaths))
 			.sort((a, b) => a.stat.mtime - b.stat.mtime)
 			.map(this.generateLine);

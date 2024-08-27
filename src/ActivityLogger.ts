@@ -1,5 +1,5 @@
 import DailyActivityPlugin from 'src/main';
-import { App, getLinkpath, MarkdownView, Plugin } from 'obsidian';
+import { App, getLinkpath, MarkdownView, Plugin, TFile } from 'obsidian';
 import moment from 'moment';
 
 export class ActivityLogger {
@@ -28,6 +28,10 @@ export class ActivityLogger {
 			(includePaths.length === 0 || includePaths.some(part => filePath.includes(part)));
 	}
 
+	private generateLine(file: TFile): string {
+		return `- [[${getLinkpath(file.path)}]] (${new Date(file.stat.mtime).toLocaleString()})`
+	}
+
 	async insertTodaysModifiedFileLinks({
 		activeView,
 		includeRegex = [],
@@ -48,7 +52,7 @@ export class ActivityLogger {
 		const links: string[] = this.app.vault.getFiles()
 			.filter(f => moment().isSame(new Date(f.stat.mtime), 'day')) 
 			.filter(f => this.fileMatchesFilters(f.path, includeRegex, excludeRegex, includePaths, excludePaths))
-			.map(f => `[[${getLinkpath(f.path)}]]`);
+			.map(this.generateLine);
 
 		const newContent = `${initialContent}\n\n**Modified Pages**\n${links.join('\n')}\n`;
 

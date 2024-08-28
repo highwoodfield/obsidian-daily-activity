@@ -24,6 +24,10 @@ export function isSameDate(a: Date, b: Date): boolean {
 		&& a.getDate() === b.getDate();
 }
 
+export function isSameHumanDate(a: Date, b: Date): boolean {
+	return isSameDate(getHumanDate(a), getHumanDate(b));
+}
+
 export function isHumanToday(date: Date) {
-	return isSameDate(getHumanDate(new Date()), date);
+	return isSameHumanDate(new Date(), date);
 }

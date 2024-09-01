@@ -18,6 +18,10 @@ export function getHumanDate(actualDate: Date): Date {
 	return humanDate;
 }
 
+export function getHumanToday(): Date {
+	return getHumanDate(new Date());
+}
+
 export function isSameDate(a: Date, b: Date): boolean {
 	return a.getFullYear() === b.getFullYear()
 		&& a.getMonth() === b.getMonth()

@@ -1,5 +1,5 @@
 import DailyActivityPlugin from 'src/main';
-import { getHumanDate, isHumanToday } from './datetime';
+import { getHumanDate, isSameHumanDate } from './datetime';
 import { App, getLinkpath, MarkdownView, Plugin, TFile } from 'obsidian';
 
 export class ActivityLogger {
@@ -32,14 +32,16 @@ export class ActivityLogger {
 		return `- [[${getLinkpath(file.path)}]] (${new Date(file.stat.mtime).toLocaleString()})`
 	}
 
-	async insertTodaysModifiedFileLinks({
+	async insertModifiedFileLinks({
 		activeView,
+		date,
 		includeRegex = [],
 		excludeRegex = [],
 		includePaths = [],
 		excludePaths = []
 	}: {
 		activeView: MarkdownView,
+		date: Date,
 		includeRegex?: string[],
 		excludeRegex?: string[],
 		includePaths?: string[],
@@ -50,12 +52,12 @@ export class ActivityLogger {
 		const initialContent = await this.app.vault.read(file);
 
 		const links: string[] = this.app.vault.getFiles()
-			.filter(f => isHumanToday(new Date(f.stat.mtime))) 
+			.filter(f => isSameHumanDate(date, new Date(f.stat.mtime)))
 			.filter(f => this.fileMatchesFilters(f.path, includeRegex, excludeRegex, includePaths, excludePaths))
 			.sort((a, b) => a.stat.mtime - b.stat.mtime)
 			.map(this.generateLine);
 
-		const newContent = `${initialContent}\n\n**Modified Notes of ${getHumanDate(new Date()).toLocaleDateString()}**\n${links.join('\n')}\n`;
+		const newContent = `${initialContent}\n\n**Modified Notes of ${getHumanDate(date).toLocaleDateString()}**\n${links.join('\n')}\n`;
 
 		await this.app.vault.modify(file, newContent);
 	}

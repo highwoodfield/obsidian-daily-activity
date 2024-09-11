@@ -2,6 +2,8 @@ import DailyActivityPlugin from 'src/main';
 import { getHumanDate, isSameHumanDate } from './datetime';
 import { App, getLinkpath, MarkdownView, Plugin, TFile } from 'obsidian';
 
+const MARKDOWN_SPECIAL_CHARACTERS = "_`*{}[]<>()#+-.!|"
+
 export class ActivityLogger {
 	app: App;
 	plugin: Plugin;
@@ -29,7 +31,11 @@ export class ActivityLogger {
 	}
 
 	private generateLine(file: TFile): string {
-		return `- [${file.basename.replaceAll("_", "\\_")}](${encodeURI(file.path)}) (${new Date(file.stat.mtime).toLocaleString()})`
+		let display = file.basename;
+		for (const c of MARKDOWN_SPECIAL_CHARACTERS) {
+			display = display.replaceAll(c, `\\${c}`);
+		}
+		return `- [${display}](${encodeURI(file.path)}) (${new Date(file.stat.mtime).toLocaleString()})`
 	}
 
 	async insertModifiedFileLinks({

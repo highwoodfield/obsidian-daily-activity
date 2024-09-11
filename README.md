@@ -23,3 +23,9 @@ npm run release-build
 ```
 
 Then, copy `main.js` and `manifest.json` to the desired directory (like `.obsidian/plugins/obsidian-modified-notes-of-today/`).
+
+## License
+
+- MIT licensed | Copyright (c) 2024 Trevor Rydalch  
+(The author of the original project. The license was mentioned in package.json)
+- MIT licensed | Copyright (c) 2024 Takagino

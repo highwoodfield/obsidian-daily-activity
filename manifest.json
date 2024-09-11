@@ -4,7 +4,7 @@
 	"version": "0.6.0",
 	"minAppVersion": "0.13.23",
 	"description": "Insert links of the notes which are modified on the date",
-	"author": "Trevor Rydalch, highwoodfield",
+	"author": "Takagino (Based on Trevor Rydalch's work)",
 	"authorUrl": "https://github.com/trydalch https://github.com/highwoodfield",
 	"isDesktopOnly": false
 }

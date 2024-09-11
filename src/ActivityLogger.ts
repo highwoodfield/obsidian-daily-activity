@@ -29,7 +29,7 @@ export class ActivityLogger {
 	}
 
 	private generateLine(file: TFile): string {
-		return `- [[${getLinkpath(file.path)}]] (${new Date(file.stat.mtime).toLocaleString()})`
+		return `- [${file.basename.replaceAll("_", "\\_")}](${encodeURI(file.path)}) (${new Date(file.stat.mtime).toLocaleString()})`
 	}
 
 	async insertModifiedFileLinks({
